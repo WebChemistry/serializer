@@ -49,10 +49,8 @@ final class SerializerExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('normalizers.contextBuilder'))
 			->setFactory(ContextBuilderNormalizer::class);
 
-		if ($builder->getByType(EntityManagerInterface::class) && $builder->getByType(DoctrineIdentityExtractor::class)) {
-			$builder->addDefinition($this->prefix('normalizers.entityFinder'))
-				->setFactory(EntityNormalizer::class);
-		}
+		$builder->addDefinition($this->prefix('normalizers.entity'))
+			->setFactory(EntityNormalizer::class);
 
 		// serializer
 
