@@ -2,7 +2,7 @@
 	"name": "webchemistry/serializer",
 	"autoload": {
 		"psr-4": {
-			"WebChemistry\\Serialiter\\": "src"
+			"WebChemistry\\Serializer\\": "src"
 		}
 	},
 	"require": {
