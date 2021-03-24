@@ -57,7 +57,6 @@ final class SerializerExtension extends CompilerExtension
 		// serializer
 
 		$builder->addDefinition($this->prefix('serializer'))
-			->setAutowired(false)
 			->setFactory($this->prefix('@serializerFactory') . '::create');
 
 		$this->getInitialization()->addBody('$this->getService("serializer.serializer");');
