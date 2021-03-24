@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace WebChemistry\Serializer;
+namespace WebChemistry\Serializer\Guard;
 
 trait SerializerRecursionGuard
 {

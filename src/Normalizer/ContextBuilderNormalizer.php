@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use WebChemistry\Serializer\Context\DenormalizerContextBuilderInterface;
 use WebChemistry\Serializer\Context\NormalizerContextBuilderInterface;
-use WebChemistry\Serializer\SerializerRecursionGuard;
+use WebChemistry\Serializer\Guard\SerializerRecursionGuard;
 
 final class ContextBuilderNormalizer
 	implements NormalizerInterface, NormalizerAwareInterface, ContextAwareNormalizerInterface, DenormalizerInterface,
