@@ -29,7 +29,6 @@ final class SerializerFactory
 
 	public function create(): Serializer
 	{
-		bdump($this->normalizers);
 		return new Serializer($this->normalizers, $this->encoders);
 	}
 
