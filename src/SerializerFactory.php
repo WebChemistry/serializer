@@ -1,0 +1,36 @@
+<?php declare(strict_types = 1);
+
+namespace WebChemistry\Serializer;
+
+use Ergebnis\Json\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Encoder\DecoderInterface;
+use Symfony\Component\Serializer\Encoder\EncoderInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Serializer;
+
+final class SerializerFactory
+{
+
+	/** @var DenormalizerInterface[]|NormalizerInterface[] */
+	private $normalizers = [];
+
+	/** @var EncoderInterface[]|DecoderInterface[] */
+	private array $encoders = [];
+
+	public function addNormalizer(DenormalizerInterface|NormalizerInterface $normalizer): void
+	{
+		$this->normalizers[] = $normalizer;
+	}
+
+	public function addEncoder(EncoderInterface|DecoderInterface $encoder): void
+	{
+		$this->encoders[] = $encoder;
+	}
+
+	public function create(): Serializer
+	{
+		bdump($this->normalizers);
+		return new Serializer($this->normalizers, $this->encoders);
+	}
+
+}

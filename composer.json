@@ -1,0 +1,12 @@
+{
+	"name": "webchemistry/serializer",
+	"autoload": {
+		"psr-4": {
+			"WebChemistry\\Serialiter\\": "src"
+		}
+	},
+	"require": {
+		"php": ">=8.0",
+		"symfony/serializer": "^5.2.4"
+	}
+}
