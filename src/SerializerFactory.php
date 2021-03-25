@@ -12,7 +12,7 @@ final class SerializerFactory
 {
 
 	/** @var DenormalizerInterface[]|NormalizerInterface[] */
-	private $normalizers = [];
+	private array $normalizers = [];
 
 	/** @var EncoderInterface[]|DecoderInterface[] */
 	private array $encoders = [];
