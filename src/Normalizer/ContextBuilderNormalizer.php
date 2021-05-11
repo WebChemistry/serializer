@@ -65,7 +65,7 @@ final class ContextBuilderNormalizer
 
 		$this->setRecursionGuard($context);
 
-		return $this->normalize($object, $format, $context);
+		return $this->normalizer->normalize($object, $format, $context);
 	}
 
 	public function supportsNormalization($data, string $format = null, array $context = [])

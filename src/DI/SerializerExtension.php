@@ -11,6 +11,7 @@ use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Utilitte\Doctrine\DoctrineIdentityExtractor;
 use WebChemistry\Serializer\Normalizer\ContextBuilderNormalizer;
+use WebChemistry\Serializer\Normalizer\EntityFinderNormalizer;
 use WebChemistry\Serializer\Normalizer\EntityNormalizer;
 use WebChemistry\Serializer\ObjectNormalizerFactory;
 use WebChemistry\Serializer\SerializerFactory;
@@ -51,6 +52,9 @@ final class SerializerExtension extends CompilerExtension
 
 		$builder->addDefinition($this->prefix('normalizers.entity'))
 			->setFactory(EntityNormalizer::class);
+
+		$builder->addDefinition($this->prefix('normalizers.entityFinder'))
+			->setFactory(EntityFinderNormalizer::class);
 
 		// serializer
 
