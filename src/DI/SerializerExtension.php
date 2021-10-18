@@ -9,12 +9,14 @@ use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use Tracy\Bar;
 use Utilitte\Doctrine\DoctrineIdentityExtractor;
 use WebChemistry\Serializer\Normalizer\ContextBuilderNormalizer;
 use WebChemistry\Serializer\Normalizer\EntityFinderNormalizer;
 use WebChemistry\Serializer\Normalizer\EntityNormalizer;
 use WebChemistry\Serializer\ObjectNormalizerFactory;
 use WebChemistry\Serializer\SerializerFactory;
+use WebChemistry\Serializer\Tracy\SerializerBar;
 
 final class SerializerExtension extends CompilerExtension
 {
@@ -56,6 +58,9 @@ final class SerializerExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('normalizers.entityFinder'))
 			->setFactory(EntityFinderNormalizer::class);
 
+		$builder->addDefinition($this->prefix('tracy.bar'))
+			->setFactory(SerializerBar::class);
+
 		// serializer
 
 		$builder->addDefinition($this->prefix('serializer'))
@@ -74,6 +79,11 @@ final class SerializerExtension extends CompilerExtension
 
 		foreach ($this->getNormalizers($config->normalizers) as $normalizer) {
 			$factory->addSetup('addNormalizer', [$normalizer]);
+		}
+
+		$service = $builder->getByType(Bar::class);
+		if ($service) {
+			$this->initialization->addBody('$this->getService(?)->addPanel($this->getService(?));', [$service, $this->prefix('tracy.bar')]);
 		}
 	}
 

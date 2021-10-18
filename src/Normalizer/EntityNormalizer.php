@@ -3,6 +3,7 @@
 namespace WebChemistry\Serializer\Normalizer;
 
 use Doctrine\ORM\EntityManagerInterface;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\Serializer\Exception\CircularReferenceException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
@@ -14,6 +15,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Utilitte\Doctrine\DoctrineIdentityExtractor;
 use WebChemistry\Serializer\Guard\SerializerRecursionGuard;
 
+#[Deprecated('Use SimpleEntityIdentity instead')]
 final class EntityNormalizer implements NormalizerAwareInterface, ContextAwareNormalizerInterface
 {
 
