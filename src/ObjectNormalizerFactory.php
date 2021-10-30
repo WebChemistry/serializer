@@ -33,13 +33,16 @@ final class ObjectNormalizerFactory
 	private $objectClassResolver = null;
 
 	/** @var mixed[] */
-	private $defaultContext = [];
+	private array $defaultContext = [];
 
 	public function __construct(
 		private Reader $reader,
+		?PropertyAccessorInterface $propertyAccessor = null,
+		?PropertyInfoExtractorInterface $propertyInfoExtractor = null,
 	)
 	{
-		$this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+		$this->propertyInfoExtractor = $propertyInfoExtractor ?? $this->createPropertyInfoExtractor();
+		$this->propertyAccessor = $propertyAccessor ?? PropertyAccess::createPropertyAccessor();
 	}
 
 	/**
@@ -83,7 +86,7 @@ final class ObjectNormalizerFactory
 			$this->classMetadataFactory ?? new ClassMetadataFactory(new AnnotationLoader($this->reader)),
 			$this->nameConverter,
 			$this->propertyAccessor,
-			$this->createPropertyInfoExtractor(),
+			$this->propertyInfoExtractor,
 			$this->classDiscriminatorResolver,
 			$this->objectClassResolver,
 			$this->defaultContext,
