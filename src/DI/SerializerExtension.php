@@ -100,16 +100,27 @@ final class SerializerExtension extends CompilerExtension
 			if (is_string($normalizer)) {
 				if (str_starts_with($normalizer, '@')) {
 					if (!str_contains($normalizer, '\\')) {
-						$services[] = $builder->getDefinition(substr($normalizer, 1));
+						$services[] = $service = $builder->getDefinition(substr($normalizer, 1));
 					} else {
-						$services[] = $builder->getDefinitionByType(substr($normalizer, 1));
+						$services[] = $service = $builder->getDefinitionByType(substr($normalizer, 1));
 					}
+
+					$service->addTag('serializer.autowire', false);
 				} elseif (str_ends_with($normalizer, '[]')) {
 					foreach ($builder->findByType(substr($normalizer, 0, -2)) as $service) {
+						if ($service->getTag('serializer.autowire') === false) {
+							continue;
+						}
+
 						$services[] = $service;
 					}
 				} else {
+					if ($builder->getByType($normalizer)) {
+						throw new LogicException(sprintf('Normalizer %s is already registered.', $normalizer));
+					}
+
 					$services[] = $builder->addDefinition($this->prefix('normalizers.dynamic.' . $i))
+						->addTag('serializer.autowire', false)
 						->setFactory($normalizer);
 				}
 			} else {
