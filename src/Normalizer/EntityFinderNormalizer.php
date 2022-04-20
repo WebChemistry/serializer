@@ -20,6 +20,10 @@ final class EntityFinderNormalizer implements DenormalizerInterface
 		if (is_object($data)) {
 			return $data;
 		}
+		
+		if ($data === '') {
+			return null;
+		}
 
 		return $this->em->find($type, $data);
 	}
