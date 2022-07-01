@@ -3,6 +3,8 @@
 namespace WebChemistry\Serializer\Normalizer;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Proxy\Proxy;
+use ReflectionClass;
 use Symfony\Component\Serializer\Exception\CircularReferenceException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
@@ -37,12 +39,11 @@ final class SimpleEntityIdentityNormalizer implements ContextAwareNormalizerInte
 			return false;
 		}
 
-		$className = $data::class;
-		$metadataFactory = $this->em->getMetadataFactory();
-		if ($metadataFactory->isTransient($className)) {
+		if ($data instanceof Proxy) {
 			$className = get_parent_class($data);
-		}
-		if (!$metadataFactory->hasMetadataFor($className)) {
+		} elseif ($this->em->getMetadataFactory()->hasMetadataFor($data::class)) {
+			$className = $data::class;
+		} else {
 			return false;
 		}
 
