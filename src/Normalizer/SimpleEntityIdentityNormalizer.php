@@ -4,17 +4,13 @@ namespace WebChemistry\Serializer\Normalizer;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Proxy\Proxy;
-use ReflectionClass;
-use Symfony\Component\Serializer\Exception\CircularReferenceException;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Exception\InvalidArgumentException;
-use Symfony\Component\Serializer\Exception\LogicException;
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Utilitte\Doctrine\DoctrineIdentityExtractor;
 
-final class SimpleEntityIdentityNormalizer implements ContextAwareNormalizerInterface
+final class SimpleEntityIdentityNormalizer implements NormalizerInterface
 {
+
+	public const CALLBACK = 'simple_entity_identity_normalizer_callback';
 
 	public function __construct(
 		private EntityManagerInterface $em,
@@ -23,7 +19,11 @@ final class SimpleEntityIdentityNormalizer implements ContextAwareNormalizerInte
 	{
 	}
 
-	public function normalize($object, string $format = null, array $context = [])
+	/**
+	 * @param mixed $object
+	 * @param mixed[] $context
+	 */
+	public function normalize($object, ?string $format = null, array $context = [])
 	{
 		return $this->identityExtractor->extractIdentity($object);
 	}
@@ -34,7 +34,14 @@ final class SimpleEntityIdentityNormalizer implements ContextAwareNormalizerInte
 			return false;
 		}
 
+		$callback = $context[self::CALLBACK] ??  null;
+
+		if ($callback && $callback($data)) {
+			return true;
+		}
+
  		$supports = $context[self::class] ?? null;
+
 		if (!$supports) {
 			return false;
 		}
