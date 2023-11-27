@@ -36,7 +36,7 @@ final class ObjectNormalizerFactory
 	private array $defaultContext = [];
 
 	public function __construct(
-		private Reader $reader,
+		private ?Reader $reader = null,
 		?PropertyAccessorInterface $propertyAccessor = null,
 		?PropertyInfoExtractorInterface $propertyInfoExtractor = null,
 	)

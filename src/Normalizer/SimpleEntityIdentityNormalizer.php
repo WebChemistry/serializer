@@ -2,19 +2,21 @@
 
 namespace WebChemistry\Serializer\Normalizer;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Proxy\Proxy;
+use LogicException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Utilitte\Doctrine\DoctrineIdentityExtractor;
 
 final class SimpleEntityIdentityNormalizer implements NormalizerInterface
 {
 
+	/** @deprecated */
 	public const CALLBACK = 'simple_entity_identity_normalizer_callback';
+	public const Callback = 'simple_entity_identity_normalizer_callback';
+	public const ClassNames = self::class;
 
 	public function __construct(
 		private EntityManagerInterface $em,
-		private DoctrineIdentityExtractor $identityExtractor,
 	)
 	{
 	}
@@ -23,38 +25,47 @@ final class SimpleEntityIdentityNormalizer implements NormalizerInterface
 	 * @param mixed $object
 	 * @param mixed[] $context
 	 */
-	public function normalize($object, ?string $format = null, array $context = [])
+	public function normalize($object, ?string $format = null, array $context = []): mixed // @phpstan-ignore-line
 	{
-		return $this->identityExtractor->extractIdentity($object);
+		assert(is_object($object));
+
+		$identifiers = $this->em->getClassMetadata(ClassUtils::getClass($object))->getIdentifierValues($object);
+
+		if (count($identifiers) <= 1) {
+			return reset($identifiers); // @phpstan-ignore-line
+		}
+
+		return $identifiers;
 	}
 
-	public function supportsNormalization($data, string $format = null, array $context = [])
+	/**
+	 * @param mixed[] $context
+	 */
+	public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
 	{
 		if (!is_object($data)) {
 			return false;
 		}
 
-		$callback = $context[self::CALLBACK] ??  null;
+		$callback = $context[self::Callback] ??  null;
 
-		if ($callback && $callback($data)) {
-			return true;
+		if ($callback && is_callable($callback)) {
+			if (!is_callable($callback)) {
+				throw new LogicException('Callback is not callable.');
+			}
+
+			if($callback($data)) {
+				return true;
+			}
 		}
 
- 		$supports = $context[self::class] ?? null;
+ 		$supports = $context[self::ClassNames] ?? null;
 
 		if (!$supports) {
 			return false;
 		}
 
-		if ($data instanceof Proxy) {
-			$className = get_parent_class($data);
-		} elseif ($this->em->getMetadataFactory()->hasMetadataFor($data::class)) {
-			$className = $data::class;
-		} else {
-			return false;
-		}
-
-		return in_array($className, $supports, true);
+		return in_array(ClassUtils::getClass($data), $supports, true);
 	}
 
 }

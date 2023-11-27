@@ -7,8 +7,16 @@
 	},
 	"require": {
 		"php": ">=8.0",
-		"symfony/serializer": "^5.2",
-		"symfony/property-access": "^5.2",
-		"phpdocumentor/reflection-docblock": "^5.2"
+		"symfony/serializer": "^6.1",
+		"symfony/property-access": "^6.1",
+		"psr/cache": "^3.0",
+		"nette/utils": "^4.0"
+	},
+	"require-dev": {
+		"nette/di": "^3.1",
+		"phpstan/phpstan": "^1.10",
+		"tracy/tracy": "^2.10",
+		"doctrine/annotations": "^2.0",
+		"doctrine/orm": "^2.17.1"
 	}
 }

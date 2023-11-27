@@ -2,18 +2,16 @@
 
 namespace WebChemistry\Serializer\DI;
 
-use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use stdClass;
 use Tracy\Bar;
-use Utilitte\Doctrine\DoctrineIdentityExtractor;
 use WebChemistry\Serializer\Normalizer\ContextBuilderNormalizer;
 use WebChemistry\Serializer\Normalizer\EntityFinderNormalizer;
-use WebChemistry\Serializer\Normalizer\EntityNormalizer;
 use WebChemistry\Serializer\ObjectNormalizerFactory;
 use WebChemistry\Serializer\SerializerFactory;
 use WebChemistry\Serializer\Tracy\SerializerBar;
@@ -26,19 +24,21 @@ final class SerializerExtension extends CompilerExtension
 		return Expect::structure([
 			'normalizers' => Expect::arrayOf(
 				Expect::anyOf(Expect::string())
-			)
+			),
+			'annotations' => Expect::bool(false),
 		]);
 	}
 
 	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
+		/** @var stdClass $config */
+		$config = $this->getConfig();
 
 		// factories
-
 		$builder->addDefinition($this->prefix('normalizers.objectFactory'))
 			->setAutowired(false)
-			->setFactory(ObjectNormalizerFactory::class);
+			->setFactory(ObjectNormalizerFactory::class, $config->annotations ? [] : [null]);
 
 		$builder->addDefinition($this->prefix('serializerFactory'))
 			->setAutowired(false)
@@ -51,9 +51,6 @@ final class SerializerExtension extends CompilerExtension
 
 		$builder->addDefinition($this->prefix('normalizers.contextBuilder'))
 			->setFactory(ContextBuilderNormalizer::class);
-
-		$builder->addDefinition($this->prefix('normalizers.entity'))
-			->setFactory(EntityNormalizer::class);
 
 		$builder->addDefinition($this->prefix('normalizers.entityFinder'))
 			->setFactory(EntityFinderNormalizer::class);
@@ -69,9 +66,10 @@ final class SerializerExtension extends CompilerExtension
 		$this->getInitialization()->addBody('$this->getService("serializer.serializer");');
 	}
 
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
+		/** @var stdClass $config */
 		$config = $this->getConfig();
 
 		$factory = $builder->getDefinition($this->prefix('serializerFactory'));

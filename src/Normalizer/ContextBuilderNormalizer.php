@@ -2,15 +2,6 @@
 
 namespace WebChemistry\Serializer\Normalizer;
 
-use Symfony\Component\Serializer\Exception\BadMethodCallException;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Exception\ExtraAttributesException;
-use Symfony\Component\Serializer\Exception\InvalidArgumentException;
-use Symfony\Component\Serializer\Exception\LogicException;
-use Symfony\Component\Serializer\Exception\RuntimeException;
-use Symfony\Component\Serializer\Exception\UnexpectedValueException;
-use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -21,9 +12,7 @@ use WebChemistry\Serializer\Context\DenormalizerContextBuilderInterface;
 use WebChemistry\Serializer\Context\NormalizerContextBuilderInterface;
 use WebChemistry\Serializer\Guard\SerializerRecursionGuard;
 
-final class ContextBuilderNormalizer
-	implements NormalizerInterface, NormalizerAwareInterface, ContextAwareNormalizerInterface, DenormalizerInterface,
-	ContextAwareDenormalizerInterface, DenormalizerAwareInterface
+final class ContextBuilderNormalizer implements NormalizerInterface, NormalizerAwareInterface, DenormalizerInterface, DenormalizerAwareInterface
 {
 
 	use SerializerRecursionGuard;
@@ -41,7 +30,10 @@ final class ContextBuilderNormalizer
 	{
 	}
 
-	public function denormalize($data, string $type, string $format = null, array $context = [])
+	/**
+	 * @param mixed[] $context
+	 */
+	public function denormalize(mixed $data, string $type, string $format = null, array $context = []): mixed
 	{
 		foreach ($this->denormalizerContextBuilders as $builder) {
 			$context = $builder->buildDenormalizerContext($data, $type, $context);
@@ -52,12 +44,18 @@ final class ContextBuilderNormalizer
 		return $this->denormalizer->denormalize($data, $type, $format, $context);
 	}
 
-	public function supportsDenormalization($data, string $type, string $format = null, array $context = [])
+	/**
+	 * @param mixed[] $context
+	 */
+	public function supportsDenormalization(mixed $data, string $type, string $format = null, array $context = []): bool
 	{
 		return !$this->isRecursion($context);
 	}
 
-	public function normalize($object, string $format = null, array $context = [])
+	/**
+	 * @param mixed[] $context
+	 */
+	public function normalize(mixed $object, string $format = null, array $context = []): mixed // @phpstan-ignore-line
 	{
 		foreach ($this->normalizerContextBuilders as $builder) {
 			$context = $builder->buildNormalizerContext($context);
@@ -68,7 +66,10 @@ final class ContextBuilderNormalizer
 		return $this->normalizer->normalize($object, $format, $context);
 	}
 
-	public function supportsNormalization($data, string $format = null, array $context = [])
+	/**
+	 * @param mixed[] $context
+	 */
+	public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
 	{
 		return !$this->isRecursion($context);
 	}

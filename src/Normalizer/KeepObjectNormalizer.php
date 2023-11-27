@@ -14,12 +14,16 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 final class KeepObjectNormalizer implements DenormalizerInterface
 {
 
-	public function denormalize($data, string $type, string $format = null, array $context = [])
+	/**
+	 * @param mixed $data
+	 * @param mixed[] $context
+	 */
+	public function denormalize(mixed $data, string $type, string $format = null, array $context = []): mixed
 	{
 		return $data;
 	}
 
-	public function supportsDenormalization($data, string $type, string $format = null)
+	public function supportsDenormalization(mixed $data, string $type, string $format = null): bool
 	{
 		return $data instanceof $type;
 	}
