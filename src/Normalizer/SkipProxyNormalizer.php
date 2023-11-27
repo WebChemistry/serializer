@@ -24,6 +24,10 @@ final class SkipProxyNormalizer implements NormalizerInterface
 	{
 		assert(is_object($object));
 
+		if ($object instanceof PersistentCollection) {
+			return [];
+		}
+
 		$identifiers = $this->em->getClassMetadata(ClassUtils::getClass($object))->getIdentifierValues($object);
 
 		if (count($identifiers) <= 1) {
