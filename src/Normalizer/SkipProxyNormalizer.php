@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\Persistence\Proxy;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use WebChemistry\Serializer\SerializerExtras;
 
 final class SkipProxyNormalizer implements NormalizerInterface
 {
@@ -37,8 +38,15 @@ final class SkipProxyNormalizer implements NormalizerInterface
 		return $identifiers;
 	}
 
-	public function supportsNormalization(mixed $data, string $format = null)
+	/**
+	 * @param mixed[] $context
+	 */
+	public function supportsNormalization(mixed $data, string $format = null, array $context = [])
 	{
+		if ($data === $context[SerializerExtras::RootData]) {
+			return false;
+		}
+
 		if (!is_object($data)) {
 			return false;
 		}
