@@ -29,7 +29,7 @@ final class SerializerFactory
 
 	public function create(): Serializer
 	{
-		return new Serializer($this->normalizers, $this->encoders);
+		return new SerializerExtras($this->normalizers, $this->encoders);
 	}
 
 }
